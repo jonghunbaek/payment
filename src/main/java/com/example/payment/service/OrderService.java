@@ -2,6 +2,7 @@ package com.example.payment.service;
 
 import com.example.payment.controller.dto.OrderResponse;
 import com.example.payment.domain.Order;
+import com.example.payment.domain.OrderStatus;
 import com.example.payment.domain.Product;
 import com.example.payment.repository.OrderRepository;
 import com.example.payment.repository.ProductRepository;
@@ -24,8 +25,9 @@ public class OrderService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품 번호입니다." + orderRequest.getPdNo()));
 
         Order order = orderRepository.save(Order.builder()
-            .product(product)
             .amount(product.getAmount())
+            .status(OrderStatus.WAITING_PAY)
+            .product(product)
             .build());
 
         return OrderResponse.of(order);

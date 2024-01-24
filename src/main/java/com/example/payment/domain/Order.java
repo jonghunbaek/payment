@@ -13,13 +13,19 @@ public class Order {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private int amount;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     @OneToOne
     private Product product;
 
     @Builder
-    private Order(int amount, Product product) {
+    private Order(int amount, OrderStatus status, Product product) {
         this.amount = amount;
+        this.status = status;
         this.product = product;
     }
 }
