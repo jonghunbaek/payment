@@ -22,7 +22,7 @@ public class OrderService {
     public OrderResponse createOrder(OrderRequest orderRequest) {
         log.info("no :: {}", orderRequest.getPdNo());
         Product product = productRepository.findByNo(orderRequest.getPdNo())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품 번호입니다." + orderRequest.getPdNo()));
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품 번호입니다. productNo :: " + orderRequest.getPdNo()));
 
         Order order = orderRepository.save(Order.builder()
             .amount(product.getAmount())
@@ -31,5 +31,19 @@ public class OrderService {
             .build());
 
         return OrderResponse.of(order);
+    }
+
+    public void completeOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 번호입니다. orderId :: " + orderId));
+
+        order.complete();
+    }
+
+    public void deleteOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 번호입니다. orderId :: " + orderId));
+
+        order.delete();
     }
 }

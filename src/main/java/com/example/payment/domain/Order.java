@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.example.payment.domain.OrderStatus.*;
+
 @NoArgsConstructor
 @Getter
 @Table(name = "orders")
@@ -27,5 +29,13 @@ public class Order {
         this.amount = amount;
         this.status = status;
         this.product = product;
+    }
+
+    public void delete() {
+        this.status = CANCEL;
+    }
+
+    public void complete() {
+        this.status = COMPLETE;
     }
 }
