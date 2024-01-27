@@ -31,7 +31,8 @@ public class PaymentController {
             return result;
         } catch (IllegalStateException e) {
             orderService.deleteOrder(orderId);
-            return refundService.refund();
+
+            return refundService.refund(paymentInfo);
         }
     }
 }

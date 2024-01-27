@@ -22,10 +22,11 @@ public class RefundService {
     private final IamportClient iamportClient;
 
     public PaymentResult refund(PaymentInfo paymentInfo) {
-        BigDecimal amount = BigDecimal.valueOf(Long.valueOf(paymentInfo.getPaidAmount()));
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(paymentInfo.getPaidAmount()));
         CancelData cancelData = new CancelData(paymentInfo.getImpUid(), true, amount);
 
         IamportResponse<Payment> cancelResult;
+
         try {
              cancelResult = iamportClient.cancelPaymentByImpUid(cancelData);
         } catch (IamportResponseException e) {
@@ -34,6 +35,6 @@ public class RefundService {
             throw new RuntimeException(e);
         }
 
-        return null;
+        return PaymentResult.of(cancelResult.getResponse());
     }
 }
