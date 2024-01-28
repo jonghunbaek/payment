@@ -15,7 +15,8 @@
             <td th:class="pd-no" th:text="${product.no}"></td>
             <td th:class="pd-name" th:text="${product.name}" th:value="${product.name}"></td>
             <td th:class="pd-amount" th:text="${product.amount}" th:value="${product.amount}">원</td>
-            <td><button th:onclick="order([[${product.no}]])">주문</button></td>
+            <td><button th:onclick="order([[${product.no}]], 'html5_inicis')">주문(kg)</button></td>
+            <td><button th:onclick="order([[${product.no}]], 'tosspayments')">주문(토스)</button></td>
         </tr>
     </table>
 </body>
@@ -26,7 +27,7 @@
     /*]]>*/
     IMP.init(impCode);
 
-    function order(pdNo) {
+    function order(pdNo, pgName) {
         let no = pdNo;
         let parent = document.getElementById(pdNo);
         let name = parent.querySelector('.pd-name').innerText;
@@ -47,7 +48,7 @@
                 console.log(result.orderId);
                 console.log(result.pdName);
                 console.log(result.amount);
-                requestPay(result.orderId, result.pdName, result.amount)
+                requestPay(result.orderId, result.pdName, result.amount, pgName)
             },
             error : function (request,status,error) {
                 console.log(request)
@@ -57,11 +58,11 @@
             }
         })
     }
-    function requestPay(orderId, pdName, amount) {
+    function requestPay(orderId, pdName, amount, pgName) {
         console.log("결제 성공");
         IMP.request_pay(
             {
-                pg: "html5_inicis",		//KG이니시스 pg파라미터 값
+                pg: pgName,
                 pay_method: "card",		//결제 방법
                 merchant_uid: orderId,  //주문번호
                 name: pdName,		//상품 명
@@ -80,8 +81,17 @@
                             merchant_uid: rsp.merchant_uid,   // 주문번호
                             amount: rsp.paid_amount
                         }),
-                    }).done(function (data) {
-                        console.log("결제 성공");
+                        success : function (result) {
+                            console.log("결제 성공");
+                            console.log(result.status);
+                        },
+                        error : function (request,status,error, result) {
+                            console.log(request)
+                            console.log(status);
+                            console.log(error);
+                            console.log("결제 취소");
+                            console.log(result.status);
+                        }
                     })
                 } else {
                     alert("결제에 실패하였습니다. 에러 내용: " + rsp.error_msg);
