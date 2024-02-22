@@ -22,7 +22,7 @@ public class PaymentController {
 
     @PostMapping("/validation")
     public PaymentResult validatePaymentInfo(@RequestBody PaymentInfo paymentInfo) {
-        long orderId = Long.parseLong(paymentInfo.getMerchantUid());
+        String orderId = paymentInfo.getMerchantUid();
 
         try {
             PaymentResult result = paymentService.createPayment(paymentInfo);

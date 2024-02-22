@@ -13,8 +13,8 @@ import static com.example.payment.domain.OrderStatus.*;
 @Entity
 public class Order {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id
+    private String id;
 
     private int amount;
 
@@ -25,7 +25,8 @@ public class Order {
     private Product product;
 
     @Builder
-    private Order(int amount, OrderStatus status, Product product) {
+    private Order(String id, int amount, OrderStatus status, Product product) {
+        this.id = id;
         this.amount = amount;
         this.status = status;
         this.product = product;

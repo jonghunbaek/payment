@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -25,6 +27,7 @@ public class OrderService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품 번호입니다. productNo :: " + orderRequest.getPdNo()));
 
         Order order = orderRepository.save(Order.builder()
+            .id(UUID.randomUUID().toString())
             .amount(product.getAmount())
             .status(OrderStatus.WAITING_PAY)
             .product(product)
@@ -33,14 +36,14 @@ public class OrderService {
         return OrderResponse.of(order);
     }
 
-    public void completeOrder(Long orderId) {
+    public void completeOrder(String orderId) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 번호입니다. orderId :: " + orderId));
 
         order.complete();
     }
 
-    public void deleteOrder(Long orderId) {
+    public void deleteOrder(String orderId) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 번호입니다. orderId :: " + orderId));
 

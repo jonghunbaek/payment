@@ -12,8 +12,8 @@ public class OrderResponse {
     private String amount;
 
     @Builder
-    private OrderResponse(Long orderId, String pdName, int amount) {
-        this.orderId = String.valueOf(orderId);
+    private OrderResponse(String orderId, String pdName, int amount) {
+        this.orderId = orderId;
         this.pdName = pdName;
         this.amount = String.valueOf(amount);
     }

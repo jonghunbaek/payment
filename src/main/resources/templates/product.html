@@ -59,10 +59,9 @@
         })
     }
     function requestPay(orderId, pdName, amount, pgName) {
-        console.log("결제 성공");
         IMP.request_pay(
             {
-                pg: pgName,
+                pg: pgName+'.'+'iamporttest_3',
                 pay_method: "card",		//결제 방법
                 merchant_uid: orderId,  //주문번호
                 name: pdName,		//상품 명
@@ -75,11 +74,12 @@
                     $.ajax({
                         url: "/payment/validation",
                         method: "POST",
-                        contentType: "application/json",
+                        dataType: "JSON",
+                        contentType: "application/json; charset=utf-8",
                         data: JSON.stringify({
-                            imp_uid: rsp.imp_uid,            // 결제 고유번호
-                            merchant_uid: rsp.merchant_uid,   // 주문번호
-                            amount: rsp.paid_amount
+                            impUid: rsp.imp_uid,            // 결제 고유번호
+                            merchantUid: rsp.merchant_uid,   // 주문번호
+                            paidAmount: rsp.paid_amount
                         }),
                         success : function (result) {
                             console.log("결제 성공");
