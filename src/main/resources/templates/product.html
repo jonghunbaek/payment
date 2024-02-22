@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+<!--    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>-->
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <title>Title</title>
 </head>
 <body>
@@ -48,7 +49,7 @@
                 console.log(result.orderId);
                 console.log(result.pdName);
                 console.log(result.amount);
-                requestPay(result.orderId, result.pdName, result.amount, pgName)
+                requestPayKg(result.orderId, result.pdName, result.amount, pgName)
             },
             error : function (request,status,error) {
                 console.log(request)
@@ -58,10 +59,53 @@
             }
         })
     }
-    function requestPay(orderId, pdName, amount, pgName) {
+
+    function requestPayToss(orderId, pdName, amount, pgName) {
         IMP.request_pay(
             {
                 pg: pgName+'.'+'iamporttest_3',
+                pay_method: "card",		//결제 방법
+                merchant_uid: orderId,  //주문번호
+                name: pdName,		//상품 명
+                amount: amount,			//금액
+            },
+
+            function (rsp) {
+                //rsp.imp_uid 값으로 결제 단건조회 API를 호출하여 결제결과를 판단합니다.
+                if (rsp.success) {
+                    $.ajax({
+                        url: "/payment/validation",
+                        method: "POST",
+                        dataType: "JSON",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                            impUid: rsp.imp_uid,            // 결제 고유번호
+                            merchantUid: rsp.merchant_uid,   // 주문번호
+                            paidAmount: rsp.paid_amount
+                        }),
+                        success : function (result) {
+                            console.log("결제 성공");
+                            console.log(result.status);
+                        },
+                        error : function (request,status,error, result) {
+                            console.log(request)
+                            console.log(status);
+                            console.log(error);
+                            console.log("결제 취소");
+                            console.log(result.status);
+                        }
+                    })
+                } else {
+                    alert("결제에 실패하였습니다. 에러 내용: " + rsp.error_msg);
+                }
+            }
+        );
+    }
+
+    function requestPayKg(orderId, pdName, amount, pgName) {
+        IMP.request_pay(
+            {
+                pg: pgName+'.'+'INIBillTst',
                 pay_method: "card",		//결제 방법
                 merchant_uid: orderId,  //주문번호
                 name: pdName,		//상품 명
